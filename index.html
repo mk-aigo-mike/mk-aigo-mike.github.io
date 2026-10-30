@@ -3,35 +3,174 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mike Aigo</title>
+  <meta name="description" content="Mike Aigo builds small AI tools that do one thing well.">
+  <title>Mike Aigo — small AI tools that do one thing well</title>
+  <script>
+    try {
+      var t = localStorage.getItem("theme");
+      if (!t) t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.dataset.theme = t;
+    } catch (e) { document.documentElement.dataset.theme = "dark"; }
+  </script>
   <style>
-    body {
-      font-family: Georgia, serif;
-      max-width: 40em;
-      margin: 4em auto;
-      padding: 0 1em;
-      line-height: 1.6;
-      color: #222;
+    :root {
+      --bg: #0b0d14; --fg: #e8eaf2; --muted: #9aa0b8; --card: #141826;
+      --line: #262c44; --a: #7c5cff; --b: #22d3ee;
     }
-    h1 { margin-bottom: 0.2em; }
-    .tagline { color: #555; margin-top: 0; font-style: italic; }
-    h2 { font-size: 1.1em; margin-top: 2em; }
-    footer { margin-top: 3em; font-size: 0.95em; color: #555; }
+    :root[data-theme="light"] {
+      --bg: #f6f7fb; --fg: #151827; --muted: #565c78; --card: #ffffff;
+      --line: #dcdfec; --a: #5b3df5; --b: #0891b2;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--fg);
+      font: 1.05rem/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+      transition: background .3s, color .3s;
+    }
+    a { color: var(--b); }
+    :focus-visible { outline: 3px solid var(--b); outline-offset: 3px; border-radius: 4px; }
+    .skip { position: absolute; left: -999px; top: 0; background: var(--a); color: #fff; padding: .5rem 1rem; z-index: 10; }
+    .skip:focus { left: 0; }
+    header.top {
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 62rem; margin: 0 auto; padding: 1.2rem 1.5rem; position: relative; z-index: 2;
+    }
+    .logo { font-weight: 800; letter-spacing: -.02em; }
+    .logo span { color: var(--a); }
+    #theme {
+      background: var(--card); color: var(--fg); border: 1px solid var(--line);
+      border-radius: 999px; padding: .45rem 1rem; font: inherit; font-size: .9rem; cursor: pointer;
+    }
+    #theme:hover { border-color: var(--a); }
+    .hero {
+      position: relative; overflow: hidden; text-align: center;
+      padding: clamp(4rem, 12vw, 8rem) 1.5rem clamp(4rem, 10vw, 7rem);
+      margin-top: -4.2rem; padding-top: clamp(7rem, 16vw, 11rem);
+    }
+    .blob {
+      position: absolute; border-radius: 50%; filter: blur(70px); opacity: .45;
+      animation: drift 14s ease-in-out infinite alternate; pointer-events: none;
+    }
+    .b1 { width: 28rem; height: 28rem; background: var(--a); top: -8rem; left: -6rem; }
+    .b2 { width: 24rem; height: 24rem; background: var(--b); bottom: -8rem; right: -5rem; animation-delay: -7s; }
+    @keyframes drift { to { transform: translate(5rem, 3rem) scale(1.2); } }
+    .hero > *:not(.blob) { position: relative; }
+    .hero h1 {
+      font-size: clamp(2.6rem, 8vw, 5.5rem); line-height: 1.05; letter-spacing: -.04em; margin: 0 0 1rem;
+      background: linear-gradient(100deg, var(--fg), var(--a) 55%, var(--b));
+      background-size: 200% auto; -webkit-background-clip: text; background-clip: text;
+      color: transparent; animation: shine 8s linear infinite;
+    }
+    @keyframes shine { to { background-position: 200% center; } }
+    .lead { max-width: 36rem; margin: 0 auto 1.5rem; color: var(--muted); font-size: 1.2rem; }
+    .typer {
+      display: inline-block; min-height: 2.4rem; padding: .4rem 1rem; border: 1px solid var(--line);
+      background: var(--card); border-radius: .6rem; font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 1rem;
+    }
+    .typer::after { content: "▌"; color: var(--b); margin-left: 2px; animation: blink 1s steps(2) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .cta {
+      display: inline-block; margin-top: 2rem; padding: .8rem 1.6rem; border-radius: 999px; font-weight: 700;
+      color: #fff; text-decoration: none; background: linear-gradient(100deg, var(--a), var(--b));
+      transition: transform .2s;
+    }
+    .cta:hover { transform: translateY(-3px); }
+    main { max-width: 62rem; margin: 0 auto; padding: 0 1.5rem 4rem; }
+    h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); letter-spacing: -.02em; margin: 0 0 .3rem; }
+    .sub { color: var(--muted); margin: 0 0 2rem; }
+    .grid { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 1rem; padding: 1.5rem;
+      transition: transform .25s, border-color .25s;
+    }
+    .card:hover, .card:focus-within { transform: translateY(-6px); border-color: var(--a); }
+    .card svg { width: 2.8rem; height: 2.8rem; stroke: var(--a); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .card h3 { margin: .8rem 0 .3rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .98rem; }
+    .about { margin-top: 4rem; max-width: 40rem; color: var(--muted); }
+    .about strong { color: var(--fg); }
+    footer { border-top: 1px solid var(--line); padding: 2rem 1.5rem; text-align: center; color: var(--muted); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
   </style>
 </head>
 <body>
-  <h1>Mike Aigo</h1>
-  <p class="tagline">Building small AI tools that do one thing well.</p>
+  <a class="skip" href="#build">Skip to content</a>
+  <header class="top">
+    <div class="logo">mike<span>.</span>aigo</div>
+    <button id="theme" type="button" aria-label="Toggle dark and light theme">Theme</button>
+  </header>
 
-  <h2>About</h2>
-  <p>
-    I build small, focused AI tools: simple utilities that solve a specific problem
-    without unnecessary complexity. I care about clear interfaces, honest behavior,
-    and software that is easy to understand and easy to throw away when it has served its purpose.
-  </p>
+  <section class="hero" aria-labelledby="title">
+    <div class="blob b1" aria-hidden="true"></div>
+    <div class="blob b2" aria-hidden="true"></div>
+    <h1 id="title">Mike Aigo</h1>
+    <p class="lead">Small AI tools that do one thing well.</p>
+    <div class="typer" id="typer" aria-live="off" aria-label="Rotating examples of tools I build"></div>
+    <br>
+    <a class="cta" href="#build">See what I build</a>
+  </section>
+
+  <main id="build">
+    <h2>What I build</h2>
+    <p class="sub">Focused utilities. Clear interfaces. Easy to understand, easy to throw away.</p>
+    <div class="grid">
+      <article class="card">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="14" y="5" width="20" height="38" rx="4"/><path d="M21 37h6M19 15h10M19 21h6"/></svg>
+        <h3>SMS code reader</h3>
+        <p>Catches one-time codes the moment they arrive and hands them to whatever needs them. Nothing else.</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="8" width="38" height="32" rx="4"/><path d="M5 17h38M12 12.5h.01M17 12.5h.01M18 28l5 5 8-9"/></svg>
+        <h3>Browser agents</h3>
+        <p>Little agents that click, fill and fetch so you don't have to, with honest logs of what they did.</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 42h36M12 34V24M22 34V12M32 34V19M42 34V28"/></svg>
+        <h3>Tiny dashboards</h3>
+        <p>One screen, a few numbers that matter, no login wall and no twelve-tab analytics suite.</p>
+      </article>
+    </div>
+    <p class="about"><strong>Philosophy:</strong> software should solve a specific problem without unnecessary complexity, behave honestly, and be easy to retire once it has served its purpose.</p>
+  </main>
 
   <footer>
     Contact: <a href="mailto:mk.aigo.mike@gmail.com">mk.aigo.mike@gmail.com</a>
+    <div><small>© <span id="yr">2026</span> Mike Aigo</small></div>
   </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement, btn = document.getElementById("theme");
+      function label() {
+        var dark = root.dataset.theme === "dark";
+        btn.textContent = dark ? "☀ Light" : "☾ Dark";
+        btn.setAttribute("aria-pressed", String(dark));
+      }
+      btn.addEventListener("click", function () {
+        root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+        try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+        label();
+      });
+      label();
+      document.getElementById("yr").textContent = new Date().getFullYear();
+
+      var phrases = ["reads your SMS codes.", "drives a browser for you.", "shows three numbers, not thirty.", "does one thing well."];
+      var el = document.getElementById("typer"), i = 0, c = 0, del = false;
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = phrases[0]; return; }
+      (function tick() {
+        var p = phrases[i];
+        c += del ? -1 : 1;
+        el.textContent = "$ tool that " + p.slice(0, c);
+        var wait = del ? 30 : 70;
+        if (!del && c === p.length) { del = true; wait = 1600; }
+        else if (del && c === 0) { del = false; i = (i + 1) % phrases.length; wait = 400; }
+        setTimeout(tick, wait);
+      })();
+    })();
+  </script>
 </body>
 </html>
